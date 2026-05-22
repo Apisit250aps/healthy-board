@@ -7,7 +7,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { Pen } from 'lucide-react'
+import Link from 'next/link'
 import {
   IconBrandGoogleFilled,
   IconScaleOutline,
@@ -45,8 +45,10 @@ export default function DockNavigate() {
           <DockIcon>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost">
-                  <IconEmpathize />
+                <Button variant="ghost" asChild>
+                  <Link href="/me">
+                    <IconEmpathize />
+                  </Link>
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
