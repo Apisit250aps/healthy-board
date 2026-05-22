@@ -5,7 +5,9 @@ import Image from 'next/image'
 import { useSession } from 'next-auth/react'
 import DockNavigate from '@/components/app/dock-navigate'
 import { Separator } from '@/components/ui/separator'
-import { ShineBorder } from '@/components/ui/shine-border';
+import { ShineBorder } from '@/components/ui/shine-border'
+import { Button } from '@/components/ui/button'
+import { IconMenu2Filled } from '@tabler/icons-react'
 
 export default function Page() {
   const { data: session } = useSession()
@@ -13,8 +15,13 @@ export default function Page() {
     <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-8 px-16 bg-white dark:bg-black sm:items-start">
         <div className="w-full flex flex-col items-center gap-4">
+          <div className="flex justify-end w-full">
+            <Button variant={'ghost'}>
+              <IconMenu2Filled />
+            </Button>
+          </div>
           <div className="relative rounded-full">
-            <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}  />
+            <ShineBorder shineColor={['#A07CFE', '#FE8FB5', '#FFBE7B']} />
             <Image
               src={session?.user?.image || ''}
               alt={session?.user?.name || ''}
