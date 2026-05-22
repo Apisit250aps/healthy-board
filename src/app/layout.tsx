@@ -26,11 +26,7 @@ export default async function RootLayout({
   return (
     <html lang="en" className={cn('h-full', 'antialiased', itim.variable)}>
       <body className={cn('min-h-full flex flex-col', itim.className)}>
-        <SessionProvider
-          session={session}
-          refetchInterval={0}
-          refetchOnWindowFocus={false}
-        >
+        <SessionProvider session={session}>
           <TooltipProvider>{children}</TooltipProvider>
         </SessionProvider>
       </body>
