@@ -13,9 +13,10 @@ import {
   IconScaleOutline,
   IconEmpathize,
   IconArrowBackUp,
+  IconLogout,
 } from '@tabler/icons-react'
 
-import { signIn, useSession } from 'next-auth/react'
+import { signIn, signOut, useSession } from 'next-auth/react'
 import { usePathname } from 'next/navigation'
 
 export default function DockNavigate() {
@@ -26,6 +27,10 @@ export default function DockNavigate() {
     await signIn('google', { callbackUrl: '/', redirect: true })
   }, [])
 
+  const Logout = React.useCallback(async () => {
+    await signOut({ callbackUrl: '/', redirect: true })
+  }, [])
+
   return (
     <Dock
       direction="middle"
@@ -33,6 +38,22 @@ export default function DockNavigate() {
     >
       {status === 'authenticated' ? (
         <React.Fragment>
+          {pathname !== '/' && (
+            <DockIcon>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" asChild>
+                    <Link href="/">
+                      <IconArrowBackUp />
+                    </Link>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>ย้อนกลับ</p>
+                </TooltipContent>
+              </Tooltip>
+            </DockIcon>
+          )}
           <DockIcon>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -59,22 +80,18 @@ export default function DockNavigate() {
               </TooltipContent>
             </Tooltip>
           </DockIcon>
-          {pathname !== '/' && (
-            <DockIcon>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" asChild>
-                    <Link href="/">
-                      <IconArrowBackUp />
-                    </Link>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>ย้อนกลับ</p>
-                </TooltipContent>
-              </Tooltip>
-            </DockIcon>
-          )}
+          <DockIcon>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" onClick={Logout}>
+                  <IconLogout />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>ออกจากระบบ</p>
+              </TooltipContent>
+            </Tooltip>
+          </DockIcon>
         </React.Fragment>
       ) : (
         <DockIcon>
