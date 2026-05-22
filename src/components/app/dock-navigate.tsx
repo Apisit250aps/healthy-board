@@ -12,12 +12,15 @@ import {
   IconBrandGoogleFilled,
   IconScaleOutline,
   IconEmpathize,
+  IconArrowBackUp,
 } from '@tabler/icons-react'
 
 import { signIn, useSession } from 'next-auth/react'
+import { usePathname } from 'next/navigation'
 
 export default function DockNavigate() {
-  const { status, data: session } = useSession()
+  const { status } = useSession()
+  const pathname = usePathname()
 
   const GoogleLogin = React.useCallback(async () => {
     await signIn('google', { callbackUrl: '/', redirect: true })
@@ -56,6 +59,22 @@ export default function DockNavigate() {
               </TooltipContent>
             </Tooltip>
           </DockIcon>
+          {pathname !== '/' && (
+            <DockIcon>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" asChild>
+                    <Link href="/">
+                      <IconArrowBackUp />
+                    </Link>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>ย้อนกลับ</p>
+                </TooltipContent>
+              </Tooltip>
+            </DockIcon>
+          )}
         </React.Fragment>
       ) : (
         <DockIcon>
