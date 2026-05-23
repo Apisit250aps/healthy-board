@@ -83,7 +83,8 @@ function LossIndicator({ rate }: { rate: number }) {
     </span>
   )
 }
-
+import { AnimatedList } from '@/components/ui/animated-list'
+import { AuroraText } from '../ui/aurora-text'
 export default function RankingList() {
   const { data: session } = useSession()
   const { data: rawData, isLoading } = useQuery<UserWeightStats[]>({
@@ -96,15 +97,16 @@ export default function RankingList() {
   })
 
   const ranking = useMemo<RankingEntry[]>(
-    () => computeRanking(rawData ?? []),
+    () => computeRanking(rawData ?? []).slice(0, 10),
     [rawData],
   )
 
   return (
-    <div className="w-full flex flex-col gap-3">
-      <div className="flex items-center gap-2">
-        <IconTrophy size={20} className="text-yellow-400" />
-        <h2 className="text-base font-bold">อันดับลดน้ำหนัก</h2>
+    <div className="w-full flex flex-col gap-3 ">
+      <div className="flex items-center gap-2 w-full justify-center">
+        <h2 className="font-bold text-4xl text-center">
+          <AuroraText>อันดับลดน้ำหนัก</AuroraText>
+        </h2>
       </div>
       <p className="text-xs text-muted-foreground -mt-1">
         จัดอันดับตามอัตราลดน้ำหนักเฉลี่ยต่อสัปดาห์
@@ -123,7 +125,7 @@ export default function RankingList() {
       )}
 
       {ranking && ranking.length > 0 && (
-        <div className="flex flex-col gap-2">
+        <AnimatedList className="flex flex-col-reverse gap-2" delay={100}>
           {ranking.map((entry) => {
             const isMe =
               session?.user?.id === entry.userId ||
@@ -191,7 +193,7 @@ export default function RankingList() {
               </div>
             )
           })}
-        </div>
+        </AnimatedList>
       )}
     </div>
   )
