@@ -13,10 +13,9 @@ import {
   IconScaleOutline,
   IconEmpathize,
   IconArrowBackUp,
-  IconLogout,
 } from '@tabler/icons-react'
 
-import { signIn, signOut, useSession } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import { usePathname } from 'next/navigation'
 
 export default function DockNavigate() {
@@ -25,10 +24,6 @@ export default function DockNavigate() {
 
   const GoogleLogin = React.useCallback(async () => {
     await signIn('google', { callbackUrl: '/', redirect: true })
-  }, [])
-
-  const Logout = React.useCallback(async () => {
-    await signOut({ callbackUrl: '/', redirect: true })
   }, [])
 
   return (
@@ -77,18 +72,6 @@ export default function DockNavigate() {
               </TooltipTrigger>
               <TooltipContent>
                 <p>ตัวฉัน</p>
-              </TooltipContent>
-            </Tooltip>
-          </DockIcon>
-          <DockIcon>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="ghost" onClick={Logout}>
-                  <IconLogout />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>ออกจากระบบ</p>
               </TooltipContent>
             </Tooltip>
           </DockIcon>
