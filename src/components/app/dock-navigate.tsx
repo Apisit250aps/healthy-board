@@ -17,6 +17,7 @@ import {
 
 import { signIn, useSession } from 'next-auth/react'
 import { usePathname } from 'next/navigation'
+import WeighRecord from './weigh-record'
 
 export default function DockNavigate() {
   const { status } = useSession()
@@ -49,18 +50,20 @@ export default function DockNavigate() {
               </Tooltip>
             </DockIcon>
           )}
-          <DockIcon>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="ghost">
-                  <IconScaleOutline />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>บันทึกน้ำหนัก</p>
-              </TooltipContent>
-            </Tooltip>
-          </DockIcon>
+          <WeighRecord>
+            <DockIcon>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost">
+                    <IconScaleOutline />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>บันทึกน้ำหนัก</p>
+                </TooltipContent>
+              </Tooltip>
+            </DockIcon>
+          </WeighRecord>
           <DockIcon>
             <Tooltip>
               <TooltipTrigger asChild>

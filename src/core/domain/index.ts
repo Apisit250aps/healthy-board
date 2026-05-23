@@ -11,7 +11,7 @@ export const userSchema = z.object({
 })
 
 export const weightRecordSchema = z.object({
-  id: z.string(),
+  id: z.string().optional(),
   userId: z.string(),
   weight: z.number(),
   date: z.date(),

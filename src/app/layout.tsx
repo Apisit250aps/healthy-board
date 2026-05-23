@@ -6,6 +6,7 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import { SessionProvider } from 'next-auth/react'
 import { auth } from '@/auth'
 import ClientProvider from '@/hooks/client-provider'
+import { OverlayProvider } from '@/hooks/use-overlay'
 
 const itim = Itim({
   weight: '400',
@@ -29,7 +30,9 @@ export default async function RootLayout({
       <body className={cn('min-h-full flex flex-col', itim.className)}>
         <ClientProvider>
           <SessionProvider session={session}>
-            <TooltipProvider>{children}</TooltipProvider>
+            <OverlayProvider>
+              <TooltipProvider>{children}</TooltipProvider>
+            </OverlayProvider>
           </SessionProvider>
         </ClientProvider>
       </body>
