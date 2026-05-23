@@ -3,7 +3,7 @@ import Google from 'next-auth/providers/google'
 import { MongoDBAdapter } from '@auth/mongodb-adapter'
 import type { AdapterUser } from '@auth/core/adapters'
 import { ObjectId } from 'mongodb'
-import client from './db'
+import client from './lib/db'
 
 const config = {
   adapter: MongoDBAdapter(client),
@@ -31,7 +31,13 @@ const config = {
           .collection('users')
           .updateOne(
             { _id: new ObjectId(user.id) },
-            { $set: { isActive: true } },
+            {
+              $set: {
+                isActive: true,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+              },
+            },
           )
       }
     },
