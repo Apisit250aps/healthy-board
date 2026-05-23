@@ -1,5 +1,5 @@
 import { auth } from '@/auth'
-import { weightCollection } from '@/lib/db/collections'
+import { usersCollection, weightCollection } from '@/lib/db/collections'
 import { weightRecordSchema } from '@/core/domain'
 import { ObjectId } from 'mongodb'
 import { NextRequest, NextResponse } from 'next/server'
@@ -88,7 +88,13 @@ async function createWeightRecord(
     }
 
     const col = await weightCollection()
+    const u = await usersCollection()
+
     await col.insertOne(record)
+    await u.updateOne(
+      { _id: new ObjectId(session.user.id) },
+      { $set: { updatedAt: new Date(), weight: parsed.data.weight } },
+    )
 
     return NextResponse.json(
       {

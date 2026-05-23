@@ -54,7 +54,7 @@ export default function WeighRecord({
     (data: WeightRecordFormValues) => {
       recordMutation.mutate(data, {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['weight-records'] })
+          queryClient.invalidateQueries({})
           method.reset()
           closeOverlay(DIALOG_KEY)
         },

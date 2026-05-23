@@ -11,7 +11,7 @@ import { useOverlay } from '@/hooks/use-overlay'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import axios from 'axios'
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 
 export const EDIT_PROFILE_DIALOG_KEY = 'edit-profile-dialog'
 
@@ -39,6 +39,19 @@ export default function EditProfileDialog({ defaultValues, trigger }: Props) {
       height: defaultValues?.height,
     },
   })
+
+  useEffect(() => {
+    method.reset({
+      name: defaultValues?.name ?? '',
+      weight: defaultValues?.weight,
+      height: defaultValues?.height,
+    })
+  }, [
+    defaultValues?.name,
+    defaultValues?.weight,
+    defaultValues?.height,
+    method,
+  ])
 
   const mutation = useMutation({
     mutationFn: async (data: EditProfileFormValues) => {

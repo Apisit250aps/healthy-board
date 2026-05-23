@@ -22,10 +22,32 @@ import EditProfileDialog, {
   EDIT_PROFILE_DIALOG_KEY,
 } from '@/components/app/edit-profile-dialog'
 import { useOverlay } from '@/hooks/use-overlay'
+import { useQuery } from '@tanstack/react-query'
+import axios from 'axios'
+import type { User } from '@/core/domain'
+
+function getBMICategory(bmi: number) {
+  if (bmi < 18.5) return { label: 'ผอม', color: 'text-blue-500' }
+  if (bmi < 25) return { label: 'ปกติ', color: 'text-green-500' }
+  if (bmi < 30) return { label: 'น้ำหนักเกิน', color: 'text-yellow-500' }
+  return { label: 'อ้วน', color: 'text-red-500' }
+}
 
 export default function Page() {
   const { data: session } = useSession()
   const { openOverlay } = useOverlay()
+  const { data: profile } = useQuery<User>({
+    queryKey: ['me'],
+    queryFn: async () => {
+      const res = await axios.get<ApiResponse<User>>('/api/me')
+      return res.data.data!
+    },
+  })
+  const bmi =
+    profile?.weight && profile?.height
+      ? profile.weight / Math.pow(profile.height / 100, 2)
+      : null
+  const bmiCategory = bmi ? getBMICategory(bmi) : null
   const Logout = React.useCallback(async () => {
     await signOut({ callbackUrl: '/', redirect: true })
   }, [])
@@ -67,28 +89,36 @@ export default function Page() {
             />
           </div>
           <div className="mb-6 flex flex-col items-center gap-1">
-            <h1 className="text-2xl font-bold text-center">{session?.user?.name}</h1>
-            <p className="text-sm text-gray-500 text-center">{session?.user?.email}</p>
+            <h1 className="text-2xl font-bold text-center">
+              {session?.user?.name}
+            </h1>
+            <p className="text-sm text-gray-500 text-center">
+              {session?.user?.email}
+            </p>
           </div>
-          <div className="flex items-center gap-2 text-sm ">
-            <div className="flex flex-col gap-1">
-              <span className="font-medium">Settings</span>
-              <span className="text-xs text-muted-foreground">
-                Manage preferences
+          <div className="flex items-center gap-4 text-sm">
+            <div className="flex flex-col items-center gap-0.5">
+              <span className="text-base font-semibold">
+                {profile?.weight != null ? `${profile.weight} kg` : '—'}
               </span>
+              <span className="text-xs text-muted-foreground">น้ำหนัก</span>
             </div>
-            <Separator orientation="vertical" />
-            <div className="flex flex-col gap-1">
-              <span className="font-medium">Account</span>
-              <span className="text-xs text-muted-foreground">
-                Profile & security
+            <Separator orientation="vertical" className="h-8" />
+            <div className="flex flex-col items-center gap-0.5">
+              <span className="text-base font-semibold">
+                {profile?.height != null ? `${profile.height} cm` : '—'}
               </span>
+              <span className="text-xs text-muted-foreground">ส่วนสูง</span>
             </div>
-            <Separator orientation="vertical" />
-            <div className="flex flex-col gap-1 ">
-              <span className="font-medium">Help</span>
+            <Separator orientation="vertical" className="h-8" />
+            <div className="flex flex-col items-center gap-0.5">
+              <span
+                className={`text-base font-semibold ${bmiCategory?.color ?? ''}`}
+              >
+                {bmi != null ? bmi.toFixed(1) : '—'}
+              </span>
               <span className="text-xs text-muted-foreground">
-                Support & docs
+                BMI{bmiCategory ? ` · ${bmiCategory.label}` : ''}
               </span>
             </div>
           </div>
@@ -99,7 +129,13 @@ export default function Page() {
         </div>
       </main>
       <DockNavigate />
-      <EditProfileDialog defaultValues={{ name: session?.user?.name ?? '' }} />
+      <EditProfileDialog
+        defaultValues={{
+          name: profile?.name ?? session?.user?.name ?? '',
+          weight: profile?.weight,
+          height: profile?.height,
+        }}
+      />
     </div>
   )
 }
