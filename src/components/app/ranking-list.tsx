@@ -173,7 +173,13 @@ export default function RankingList() {
                   </span>
                   <span className="text-xs text-muted-foreground">
                     {entry.firstWeight} → {entry.lastWeight} kg ·{' '}
-                    {entry.totalRecords} ครั้ง
+                    {entry.totalRecords} ครั้ง ·{' '}
+                    {Math.round(
+                      (new Date(entry.lastDate).getTime() -
+                        new Date(entry.firstDate).getTime()) /
+                        (1000 * 60 * 60 * 24),
+                    )}{' '}
+                    วัน
                   </span>
                 </div>
 

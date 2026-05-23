@@ -30,6 +30,8 @@ export default function DockNavigate() {
   return (
     <Dock
       direction="middle"
+      iconSize={52}
+      iconMagnification={72}
       className="absolute bottom-4 rounded-lg bg-white/80 backdrop-blur-sm dark:bg-black/80"
     >
       {status === 'authenticated' ? (
@@ -38,9 +40,9 @@ export default function DockNavigate() {
             <DockIcon>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="ghost" asChild>
+                  <Button variant="ghost" size="lg" asChild>
                     <Link href="/">
-                      <IconArrowBackUp />
+                      <IconArrowBackUp size={26} />
                     </Link>
                   </Button>
                 </TooltipTrigger>
@@ -54,8 +56,8 @@ export default function DockNavigate() {
             <DockIcon>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="ghost">
-                    <IconScaleOutline />
+                  <Button variant="ghost" size="lg">
+                    <IconScaleOutline size={26} />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -67,9 +69,9 @@ export default function DockNavigate() {
           <DockIcon>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" asChild>
+                <Button variant="ghost" size="lg" asChild>
                   <Link href="/me">
-                    <IconEmpathize />
+                    <IconEmpathize size={26} />
                   </Link>
                 </Button>
               </TooltipTrigger>
@@ -83,8 +85,8 @@ export default function DockNavigate() {
         <DockIcon>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button onClick={GoogleLogin}>
-                <IconBrandGoogleFilled />
+              <Button onClick={GoogleLogin} size="lg">
+                <IconBrandGoogleFilled size={26} />
               </Button>
             </TooltipTrigger>
             <TooltipContent>
