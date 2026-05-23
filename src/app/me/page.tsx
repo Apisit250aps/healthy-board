@@ -17,9 +17,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import WeightRecordsTable from '@/components/app/weight-records-table'
+import EditProfileDialog, {
+  EDIT_PROFILE_DIALOG_KEY,
+} from '@/components/app/edit-profile-dialog'
+import { useOverlay } from '@/hooks/use-overlay'
 
 export default function Page() {
   const { data: session } = useSession()
+  const { openOverlay } = useOverlay()
   const Logout = React.useCallback(async () => {
     await signOut({ callbackUrl: '/', redirect: true })
   }, [])
@@ -37,7 +43,11 @@ export default function Page() {
               <DropdownMenuContent className="w-40" align="start">
                 <DropdownMenuGroup>
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <DropdownMenuItem>Profile</DropdownMenuItem>
+                  <DropdownMenuItem
+                    onSelect={() => openOverlay(EDIT_PROFILE_DIALOG_KEY)}
+                  >
+                    Profile
+                  </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
@@ -56,9 +66,9 @@ export default function Page() {
               className="rounded-full"
             />
           </div>
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold">{session?.user?.name}</h1>
-            <p className="text-sm text-gray-500">{session?.user?.email}</p>
+          <div className="mb-6 flex flex-col items-center gap-1">
+            <h1 className="text-2xl font-bold text-center">{session?.user?.name}</h1>
+            <p className="text-sm text-gray-500 text-center">{session?.user?.email}</p>
           </div>
           <div className="flex items-center gap-2 text-sm ">
             <div className="flex flex-col gap-1">
@@ -82,9 +92,14 @@ export default function Page() {
               </span>
             </div>
           </div>
+          <div className="w-full px-4 pb-24" id="record">
+            <h2 className="text-base font-semibold mb-3">บันทึกน้ำหนัก</h2>
+            <WeightRecordsTable />
+          </div>
         </div>
       </main>
       <DockNavigate />
+      <EditProfileDialog defaultValues={{ name: session?.user?.name ?? '' }} />
     </div>
   )
 }

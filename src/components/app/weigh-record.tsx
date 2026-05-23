@@ -1,30 +1,19 @@
 'use client'
 
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
-
 import { weightRecordSchema } from '@/core/domain'
 import z from 'zod'
 import { Button } from '../ui/button'
 import { Field, FieldError, FieldGroup, FieldLabel } from '../ui/field'
 import { Input } from '../ui/input'
-import { DockIcon } from '../ui/dock'
-import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
-import { IconScaleOutline } from '@tabler/icons-react'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ModalDialog } from '../ui/overlay'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useOverlay } from '@/hooks/use-overlay'
 import axios from 'axios'
 import { useCallback } from 'react'
+
+const DIALOG_KEY = 'weigh-record-create'
 
 const schema = weightRecordSchema
   .omit({
@@ -45,6 +34,8 @@ export default function WeighRecord({
 }: {
   children?: React.ReactNode
 }) {
+  const queryClient = useQueryClient()
+  const { closeOverlay } = useOverlay()
   const method = useForm<WeightRecordFormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -62,23 +53,23 @@ export default function WeighRecord({
   const onSubmit = useCallback(
     (data: WeightRecordFormValues) => {
       recordMutation.mutate(data, {
-        onSuccess: (data, variables, _, context) => {
-          context.client.invalidateQueries({ queryKey: ['weight-records'] })
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ['weight-records'] })
           method.reset()
+          closeOverlay(DIALOG_KEY)
         },
       })
     },
-    [recordMutation, method],
+    [recordMutation, method, queryClient, closeOverlay],
   )
   return (
     <ModalDialog
       title="บันทึกน้ำหนัก"
       description="กรุณากรอกน้ำหนักของคุณ"
       trigger={children}
+      dialogKey={DIALOG_KEY}
     >
-      <form
-        onSubmit={method.handleSubmit(onSubmit)}
-      >
+      <form onSubmit={method.handleSubmit(onSubmit)}>
         <FieldGroup>
           <Controller
             name="weight"
@@ -108,7 +99,9 @@ export default function WeighRecord({
           />
         </FieldGroup>
         <div className="flex justify-end mt-4">
-          <Button type="submit">บันทึก</Button>
+          <Button type="submit" disabled={recordMutation.isPending}>
+            {recordMutation.isPending ? 'กำลังบันทึก...' : 'บันทึก'}
+          </Button>
         </div>
       </form>
     </ModalDialog>

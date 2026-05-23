@@ -1,3 +1,3 @@
-import { weightRecord } from '@/core/controllers/weight'
+import { getWeightRecords, createWeightRecord } from '@/core/controllers/record'
 
-export { weightRecord as POST }
+export { getWeightRecords as GET, createWeightRecord as POST }
