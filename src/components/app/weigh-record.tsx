@@ -12,6 +12,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useOverlay } from '@/hooks/use-overlay'
 import axios from 'axios'
 import { useCallback } from 'react'
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
+import { Calendar } from '../ui/calendar'
+import { CalendarIcon } from 'lucide-react'
+import { format } from 'date-fns'
 
 const DIALOG_KEY = 'weigh-record-create'
 
@@ -19,7 +23,6 @@ const schema = weightRecordSchema
   .omit({
     id: true,
     userId: true,
-    date: true,
     createdAt: true,
     updatedAt: true,
   })
@@ -40,6 +43,7 @@ export default function WeighRecord({
     resolver: zodResolver(schema),
     defaultValues: {
       weight: 0,
+      date: new Date(),
     },
   })
 
@@ -91,6 +95,44 @@ export default function WeighRecord({
                     field.onChange(isNaN(value) ? 0.0 : value)
                   }}
                 />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+          <Controller
+            name="date"
+            control={method.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="form-rhf-demo-date">
+                  วันที่บันทึก
+                </FieldLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      id="form-rhf-demo-date"
+                      variant="outline"
+                      data-empty={!field.value}
+                      className="w-full justify-start text-left font-normal data-[empty=true]:text-muted-foreground"
+                    >
+                      <CalendarIcon />
+                      {field.value ? (
+                        format(field.value, 'PPP')
+                      ) : (
+                        <span>เลือกวันที่</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={(d) => field.onChange(d ?? new Date())}
+                    />
+                  </PopoverContent>
+                </Popover>
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
                 )}

@@ -18,6 +18,10 @@ import { ConfirmDialog, ModalDialog } from '../ui/overlay'
 import { Field, FieldError, FieldGroup, FieldLabel } from '../ui/field'
 import { Input } from '../ui/input'
 import { useOverlay } from '@/hooks/use-overlay'
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
+import { Calendar } from '../ui/calendar'
+import { CalendarIcon } from 'lucide-react'
+import { format } from 'date-fns'
 import {
   Table,
   TableBody,
@@ -38,7 +42,7 @@ export type WeightRecordDTO = {
 import { IconPencil, IconTrash } from '@tabler/icons-react'
 
 const editSchema = weightRecordSchema
-  .pick({ weight: true })
+  .pick({ weight: true, date: true })
   .extend({ weight: z.number().min(0, 'น้ำหนักต้องเป็นตัวเลขบวก') })
 
 type EditFormValues = z.infer<typeof editSchema>
@@ -50,7 +54,7 @@ function EditDialog({ record }: { record: WeightRecordDTO }) {
 
   const method = useForm<EditFormValues>({
     resolver: zodResolver(editSchema),
-    defaultValues: { weight: record.weight },
+    defaultValues: { weight: record.weight, date: new Date(record.date) },
   })
 
   const mutation = useMutation({
@@ -95,6 +99,44 @@ function EditDialog({ record }: { record: WeightRecordDTO }) {
                     field.onChange(isNaN(value) ? 0 : value)
                   }}
                 />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+          <Controller
+            name="date"
+            control={method.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={`edit-date-input-${record.id}`}>
+                  วันที่บันทึก
+                </FieldLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      id={`edit-date-input-${record.id}`}
+                      variant="outline"
+                      data-empty={!field.value}
+                      className="w-full justify-start text-left font-normal data-[empty=true]:text-muted-foreground"
+                    >
+                      <CalendarIcon />
+                      {field.value ? (
+                        format(field.value, 'PPP')
+                      ) : (
+                        <span>เลือกวันที่</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={(d) => field.onChange(d ?? new Date())}
+                    />
+                  </PopoverContent>
+                </Popover>
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
                 )}

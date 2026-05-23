@@ -3,9 +3,15 @@ import { usersCollection, weightCollection } from '@/lib/db/collections'
 import { weightRecordSchema } from '@/core/domain'
 import { ObjectId } from 'mongodb'
 import { NextRequest, NextResponse } from 'next/server'
+import z from 'zod'
 
-const createSchema = weightRecordSchema.pick({ weight: true })
-const updateSchema = weightRecordSchema.pick({ weight: true })
+const createSchema = weightRecordSchema
+  .pick({ weight: true, date: true })
+  .extend({ date: z.coerce.date() })
+
+const updateSchema = weightRecordSchema
+  .pick({ weight: true, date: true })
+  .extend({ date: z.coerce.date() })
 
 function unauthorized() {
   return NextResponse.json(
@@ -21,10 +27,7 @@ function serverError(error: unknown) {
   )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function getWeightRecords(
-  _req: NextRequest,
-): Promise<NextResponse<ApiResponse<unknown>>> {
+async function getWeightRecords(): Promise<NextResponse<ApiResponse<unknown>>> {
   try {
     const session = await auth()
     if (!session) return unauthorized()
@@ -82,7 +85,7 @@ async function createWeightRecord(
       id,
       userId: session.user.id!,
       weight: parsed.data.weight,
-      date: now,
+      date: parsed.data.date,
       createdAt: now,
       updatedAt: now,
     }
@@ -139,7 +142,13 @@ async function updateWeightRecord(
     const col = await weightCollection()
     const result = await col.findOneAndUpdate(
       { id, userId: session.user.id },
-      { $set: { weight: parsed.data.weight, updatedAt: new Date() } },
+      {
+        $set: {
+          weight: parsed.data.weight,
+          date: parsed.data.date,
+          updatedAt: new Date(),
+        },
+      },
       { returnDocument: 'after' },
     )
 

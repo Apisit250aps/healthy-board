@@ -18,13 +18,13 @@ async function weightRecord(
       )
     }
 
-    const { weight } = await req.json()
+    const { weight, date } = await req.json()
     const now = new Date()
     const collection = await weightCollection()
     const newRecord = await collection.insertOne({
       userId: session.user.id!,
       weight,
-      date: now,
+      date: date ? new Date(date) : now,
       updatedAt: now,
       createdAt: now,
     })
@@ -36,7 +36,7 @@ async function weightRecord(
         id: newRecord.insertedId.toString(),
         userId: session.user.id!,
         weight,
-        date: now,
+        date: date ? new Date(date) : now,
         updatedAt: now,
         createdAt: now,
       },
