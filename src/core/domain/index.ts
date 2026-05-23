@@ -5,6 +5,10 @@ export const userSchema = z.object({
   name: z.string(),
   email: z.email(),
   image: z.url().optional(),
+  // health
+  weight: z.number().optional(),
+  height: z.number().optional(),
+  // 
   isActive: z.boolean().default(true),
   createdAt: z.date().default(() => new Date()),
   updatedAt: z.date().default(() => new Date()),
