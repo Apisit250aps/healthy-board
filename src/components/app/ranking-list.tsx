@@ -148,8 +148,12 @@ export default function RankingList() {
                       src={entry.image}
                       alt={entry.name}
                       fill
+                      sizes="40px"
                       className="object-cover"
-                      unoptimized
+                      unoptimized={
+                        entry.image.includes('.svg') ||
+                        entry.image.includes('dicebear.com')
+                      }
                     />
                   ) : (
                     <span className="flex size-full items-center justify-center text-sm font-semibold text-muted-foreground">

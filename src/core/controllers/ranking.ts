@@ -18,14 +18,6 @@ async function getRanking(): Promise<
   NextResponse<ApiResponse<UserWeightStats[]>>
 > {
   try {
-    const session = await auth()
-    if (!session) {
-      return NextResponse.json(
-        { success: false, message: 'Unauthorized' },
-        { status: 401 },
-      )
-    }
-
     const db = await connect()
 
     // group weight records per user — ไม่คำนวณ rate ที่นี่
